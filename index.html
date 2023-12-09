@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 20px;
+        }
+
+        td {
+            border: 1px solid black;
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic-Tac-Toe</h1>
+    <table>
+        <tr>
+            <td id="cell0" onclick="makeMove(0)"></td>
+            <td id="cell1" onclick="makeMove(1)"></td>
+            <td id="cell2" onclick="makeMove(2)"></td>
+        </tr>
+        <tr>
+            <td id="cell3" onclick="makeMove(3)"></td>
+            <td id="cell4" onclick="makeMove(4)"></td>
+            <td id="cell5" onclick="makeMove(5)"></td>
+        </tr>
+        <tr>
+            <td id="cell6" onclick="makeMove(6)"></td>
+            <td id="cell7" onclick="makeMove(7)"></td>
+            <td id="cell8" onclick="makeMove(8)"></td>
+        </tr>
+    </table>
+    <button onclick="resetGame()">Reset Game</button>
+
+    <script>
+        function makeMove(position) {
+            fetch('/make_move', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `position=${position}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateBoard(data.board);
+                    if (data.winner) {
+                        alert(`Player ${data.winner} wins!`);
+                        resetGame();
+                    } else if (data.tie) {
+                        alert("It's a tie!");
+                        resetGame();
+                    }
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        function resetGame() {
+            fetch('/reset_game', {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateBoard(data.board);
+            });
+        }
+
+        function updateBoard(board) {
+            for (let i = 0; i < 9; i++) {
+                document.getElementById(`cell${i}`).innerText = board[i];
+            }
+        }
+    </script>
+</body>
+</html>
