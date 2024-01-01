@@ -43,9 +43,18 @@ class TicTacToe():
     def switch_player(self):
         self.current_player = 'O' if self.current_player == 'X' else 'X'
 
+    def choice_level(self):
+        choice = int(input("Select level: "))
+        if choice == 1:
+            return levels_of_difficult.easy_level(self.board)
+        else:
+            return 0
+    
+    
     def computer(self,level):
+        
         while self.current_player == 'O':
-            position = level
+            position = self.choice_level()
             if self.board[position] == ' ':
                 self.board[position] = 'O'
                 self.switch_player()
@@ -57,9 +66,7 @@ def start_game():
 
     level = int(input("Select level: "))
     game = TicTacToe()
-
-    if level == 1:
-        level = levels_of_difficult.easy_level(game.board)
+    level = game.choice_level()
 
     while True:
         game.print_board()
